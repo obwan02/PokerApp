@@ -1,14 +1,14 @@
 <div class="container">
     <!-- state -->
     <div class="info">
-        <div class="label">
+        <div class="label" *ngIf="stateService.round">
             <b>Pot</b>
-            <span>0</span>
+            <span>{{stateService.round?.currentPot}}</span>
         </div>
 
-        <div class="label">
+        <div class="label" *ngIf="stateService.round">
             <b>Bet</b>
-            <span>0</span>
+            <span>{{stateService.round?.currentBet}}</span>
         </div>
 
         <div class="menu right-text">
@@ -20,4 +20,7 @@
     <app-player [player]="player" *ngFor="let player of stateService.preRoundPlayers"></app-player>
 
     <!-- controls -->
+    <div class="center-text" *ngIf="!stateService.round">
+        <button mat-button mat-raised-button color="primary" (click)="start()">Start</button>
+    </div>
 </div>

@@ -37,6 +37,7 @@ export class StateService {
 
     this.socket?.on(StateService.EVENT_TYPES.START, (round) => {
       // todo: set round
+      console.log("Starting round");
       this.round = round;
       this.roundStarted.emit();
     });
@@ -67,5 +68,9 @@ export class StateService {
         observer.next();
       });
     });
+  }
+
+  start(): void {
+    this.socket?.emit(StateService.EVENT_TYPES.START);
   }
 }

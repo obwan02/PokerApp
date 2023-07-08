@@ -13,4 +13,8 @@ export class PlayComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  start(): void {
+    this.stateService.start()
+  }
+
 }
