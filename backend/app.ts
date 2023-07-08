@@ -1,7 +1,10 @@
 import { config } from 'dotenv';
-import express, { Application } from 'express';
 import { Server } from 'http';
+import express, { Application } from 'express';
 import { Server as IOServer, Socket } from 'socket.io';
+import { Player, Game, Round } from './state';
+
+import logger from './lib/logger';
 
 config();
 
@@ -16,27 +19,39 @@ let round: Round;
 
 io.on('connection', (socket: Socket) => {
 
+	/**
+	 * Register player into game
+	 */
 	socket.on('register', (name: string, chips: number) => {
-	  const player = new Player(socket.id, name, chips);
-	  game.addPlayer(player);
+		logger.info(`Player ${name} registered with ${chips} chips`);
+		const player = new Player(socket.id, name, chips);
+		game.addPlayer(player);
 	});
 
+	/**
+	 * Start the game
+	 */
 	socket.on('start', () => {
+		logger.info(`The game has now started at ${Date.now()}`)
 		round = game.startRound();
 		io.emit('started');
 	});
-  
+
+	/**
+	 * Player to perform action
+	 */
 	socket.on('action', (action: string, amount: number = 0) => {
 		const player = game.getPlayerById(socket.id);
-
 		if (!player) {
 			throw new Error('Player could not be found');
 		}
 
-	  switch (action) {
+		logger.info(`Player ${player.name} performed action ${action}`);
+
+		switch (action) {
 			case 'fold':
 				//player.status = STATUS.folded;
-		  	break;
+				break;
 			case 'call':
 				//player.status = STATUS.playing;
 				break;
@@ -45,16 +60,21 @@ io.on('connection', (socket: Socket) => {
 				//player.chips -= amount;
 				//round.addToPot(amount);
 				break;
-	  }
+			default:
+				logger.error('Player has performed an invalid action');
+				return;
+		}
 
-	  const pot = round.currentPot;
+		const pot = round.currentPot;
 
-	  io.emit('pot_updated', pot);
-	  io.emit('user_updated', player);
+		io.emit('pot_updated', pot);
+		io.emit('user_updated', player);
 	});
-  });
-  
+});
 
+/**
+ * Start the web server
+ */
 app.listen(PORT, () => {
-	console.log(`Server is listening on port ${PORT}`);
+	logger.info(`Server is listening on port ${PORT}`);
 });
