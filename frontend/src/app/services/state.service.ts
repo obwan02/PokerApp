@@ -17,7 +17,7 @@ export class StateService {
     START: 'start', // send and recieve
     ACTION: 'action', // send
     TURN_TAKEN: 'turn_taken', // recieve
-    NEW_PLAYER: 'new_player' // recieve
+    UPDATE_PLAYERS: 'update_players' // recieve
   };
 
   socket?: Socket;
@@ -29,7 +29,7 @@ export class StateService {
   constructor() {}
 
   private registerEvents() {
-    this.socket?.on(StateService.EVENT_TYPES.NEW_PLAYER, (players) => {
+    this.socket?.on(StateService.EVENT_TYPES.UPDATE_PLAYERS, (players) => {
       // todo: set round
       this.preRoundPlayers = players;
       this.playerJoined.emit();
@@ -62,9 +62,9 @@ export class StateService {
         return;
       }
 
-      this.socket.emit(StateService.EVENT_TYPES.REGISTER, name, chips, (_: any) => {
+      this.socket?.emitWithAck(StateService.EVENT_TYPES.REGISTER, name, chips).then((_: any) => {
         // todo: set round
-        observer.complete();
+        observer.next();
       });
     });
   }
