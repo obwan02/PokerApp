@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
 @Injectable({
@@ -12,12 +13,26 @@ export class StateService {
 
   }
 
-  join(host: string, name: string, chips: number): void {
+  join(host: string, name: string, chips: number): Observable<void> {
     this.socket = io(host);
 
-    this.socket.on('example', data => {
+    return new Observable(observer => {
       
+      if(!this.socket) {
+        observer.error();
+        return;
+      }
+
+      this.socket.emit('register', {
+        name,
+        chips
+      }, (_: any) => {
+        observer.complete();
+      });
     });
+    
   }
+
+
 
 }
