@@ -38,9 +38,9 @@ const EVENT_TYPES = {
  */
 io.on('connection', (socket: Socket) => {
   // register event
-  socket.on(EVENT_TYPES.REGISTER, (name: string, chips: number) =>
-    registerPlayer(name, chips, socket)
-  );
+  socket.on(EVENT_TYPES.REGISTER, (name: string, chips: number, callback: Function) => {
+    registerPlayer(name, chips, socket, callback);
+  });
 
   // start game event
   socket.on(EVENT_TYPES.START, () => startGame());
@@ -54,12 +54,13 @@ io.on('connection', (socket: Socket) => {
 /**
  * Register the player into the game
  */
-const registerPlayer = (name: string, chips: number, socket: Socket) => {
+const registerPlayer = (name: string, chips: number, socket: Socket, callback: Function) => {
   logger.info(`Player ${name} registered with ${chips} chips`);
   const player = new Player(socket.id, name, chips);
   game.addPlayer(player);
 
   io.emit(EVENT_TYPES.UPDATE_PLAYERS, game.players);
+  callback();
 };
 
 /**
