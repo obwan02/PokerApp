@@ -49,12 +49,22 @@ io.on('connection', (socket: Socket) => {
   socket.on(EVENT_TYPES.ACTION, (action: string, amount: number) =>
     performAction(action, amount, socket)
   );
+
+  // remove player on disconnect
+  socket.on('disconnect', () => 
+    removePlayer(socket.id)
+  );
 });
 
 /**
  * Register the player into the game
  */
 const registerPlayer = (name: string, chips: number, socket: Socket, callback: Function) => {
+  // if (round) {
+  //   logger.error('Player tried to join a game that was already in progress');
+  //   return;
+  // }
+
   logger.info(`Player ${name} registered with ${chips} chips`);
   const player = new Player(socket.id, name, chips);
   game.addPlayer(player);
@@ -62,6 +72,20 @@ const registerPlayer = (name: string, chips: number, socket: Socket, callback: F
   io.emit(EVENT_TYPES.UPDATE_PLAYERS, game.players);
   callback();
 };
+
+/**
+ * Remove a player from the game
+ */
+const removePlayer = (playerId: string) => {
+  const player = game.getPlayerById(playerId);
+
+  if (!player) {
+    logger.error('Tried to remove a player that does not exist');
+  }
+
+  logger.info(`Player ${player?.name || ''} has left the lobby`);
+  game.removePlayerById(playerId);
+}
 
 /**
  * Initiate the game
@@ -115,6 +139,8 @@ const performAction = (action: string, amount: number, socket: Socket) => {
 
   io.emit(EVENT_TYPES.TURN_TAKEN, { round, turnTaken });
 };
+
+
 
 /**
  * Start the IO server

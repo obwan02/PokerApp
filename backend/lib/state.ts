@@ -135,6 +135,10 @@ class Game {
     return this.players.find((player) => player.id == id);
   }
 
+  removePlayerById(id: string) {
+    this.players = this.players.filter(player => player.id !== id);
+  }
+
   nextRound(): Round {
     let round = new Round(this);
     // rotate the players
