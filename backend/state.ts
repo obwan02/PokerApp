@@ -1,6 +1,5 @@
 class Player {
-	constructor(public name: string, public chips: number) { }
-
+	constructor(public id: string, public name: string, public chips: number) { }
 }
 
 enum RoundState {
@@ -20,12 +19,13 @@ class Round {
 	state: RoundState = RoundState.PreFlop;
 	currentPot: number = 0;
 	dealerIndex: number = 0;
-
 	playerStatuses: PlayerStatus[];
 
-	constructor(players: Player[]) {
-		this.playerStatuses = Array(players.length).fill(PlayerStatus.Playing)
+	constructor(public game: Game) {
+		this.playerStatuses = Array(this.game.players.length).fill(PlayerStatus.Playing)
 	}
+
+
 }
 
 class Game {
@@ -39,8 +39,12 @@ class Game {
 		this.players.push(player)
 	}
 
-	makeMove() {
+	getPlayerById(id: string) {
+		return this.players.find(player => player.id == id)
+	}
 
+	startRound(): Round {
+		return new Round(this)
 	}
 }
 
