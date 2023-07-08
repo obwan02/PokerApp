@@ -1,0 +1,15 @@
+<h1 mat-dialog-title>Raise</h1>
+
+<div mat-dialog-content>
+    <mat-form-field class="full-width">
+        <mat-label>Amount</mat-label>
+        <mat-select [(ngModel)]="amount">
+          <mat-option *ngFor="let value of getRaiseOptions()" [value]="value">{{value}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="cancel()">Cancel</button>
+  <button mat-button mat-raised-button color="primary" (click)="done()">Raise</button>
+</div>

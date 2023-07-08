@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { RaiseModalComponent } from '../raise-modal/raise-modal.component';
 import { StateService } from '../services/state.service';
 
 @Component({
@@ -8,7 +10,7 @@ import { StateService } from '../services/state.service';
 })
 export class PlayComponent implements OnInit {
 
-  constructor(public stateService: StateService) { }
+  constructor(public stateService: StateService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
   }
@@ -26,8 +28,14 @@ export class PlayComponent implements OnInit {
   }
 
   raise(): void {
-    var amount = prompt('Raise amount');
-    this.stateService.raise(parseInt(amount || '0'));
+    const dialogRef = this.dialog.open(RaiseModalComponent, {});
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result)
+        return;
+
+      this.stateService.raise(result as number);
+    });
   }
 
 }

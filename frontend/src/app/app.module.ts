@@ -12,6 +12,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
+import { RaiseModalComponent } from './raise-modal/raise-modal.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -19,7 +22,8 @@ import { FormsModule } from '@angular/forms';
     PlayerComponent,
     JoinComponent,
     ActionsComponent,
-    PlayComponent
+    PlayComponent,
+    RaiseModalComponent
   ],
   imports: [
     BrowserModule,
@@ -28,9 +32,11 @@ import { FormsModule } from '@angular/forms';
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatSelectModule,
+    MatDialogModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent, RaiseModalComponent]
 })
 export class AppModule { }
