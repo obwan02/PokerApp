@@ -24,9 +24,8 @@ const EVENT_TYPES = {
   REGISTER: 'register',
   START: 'start',
   ACTION: 'action',
-  POT_UPDATED: 'pot_updated',
-  USER_UPDATED: 'user_updated',
   TURN_TAKEN: 'turn_taken',
+  NEW_PLAYER: 'new_player'
 }
 
 /**
@@ -51,7 +50,7 @@ const registerPlayer = (name: string, chips: number, socket: Socket) => {
   const player = new Player(socket.id, name, chips);
   game.addPlayer(player);
 
-  io.emit(EVENT_TYPES.USER_UPDATED, player);
+  io.emit(EVENT_TYPES.NEW_PLAYER, player);
 }
 
 /**
@@ -103,10 +102,6 @@ const performAction = (action: string, amount: number, socket: Socket) => {
       return;
   }
 
-  const pot = round.currentPot;
-
-  io.emit('pot_updated', pot);
-  io.emit('user_updated', player);
   io.emit('turn_taken', { round, turnTaken });
 }
 

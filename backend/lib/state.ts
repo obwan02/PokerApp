@@ -34,6 +34,7 @@ class Move {
 }
 
 class Round {
+	game: Game;
 	state: RoundState = RoundState.PreFlop;
 	currentPot: number = 0;
 	currentBet: number = 0;
@@ -43,7 +44,8 @@ class Round {
 	playerStatuses: PlayerStatus[];
 	playerBets: number[];
 
-	constructor(public game: Game) {
+	constructor(game: Game) {
+		this.game = game;
 		this.playerStatuses = Array(this.game.players.length).fill(PlayerStatus.Playing)
 		this.playerBets = Array(this.game.players.length).fill(0);
 	}
