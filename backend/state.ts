@@ -39,7 +39,7 @@ class Game {
 		this.players.push(player)
 	}
 
-	getPlayerById(id: string) {
+	getPlayerById(id: string): Player | undefined {
 		return this.players.find(player => player.id == id)
 	}
 
