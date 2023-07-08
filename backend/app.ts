@@ -25,7 +25,7 @@ const EVENT_TYPES = {
   START: 'start',
   ACTION: 'action',
   TURN_TAKEN: 'turn_taken',
-  NEW_PLAYER: 'new_player'
+  UPDATE_PLAYERS: 'update_players'
 };
 
 /**
@@ -54,7 +54,7 @@ const registerPlayer = (name: string, chips: number, socket: Socket) => {
   const player = new Player(socket.id, name, chips);
   game.addPlayer(player);
 
-  io.emit(EVENT_TYPES.NEW_PLAYER, player);
+  io.emit(EVENT_TYPES.UPDATE_PLAYERS, game.players);
 };
 
 /**
