@@ -1,0 +1,19 @@
+{
+  "name": "pokerapp_backend",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/obwan02/PokerApp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/obwan02/PokerApp/issues"
+  },
+  "homepage": "https://github.com/obwan02/PokerApp#readme"
+}
