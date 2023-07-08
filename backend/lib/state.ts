@@ -21,7 +21,7 @@ enum MoveType {
 
 enum TurnState {
 	Continue,
-	NextRound,
+	NextTurn,
 	End
 };
 
@@ -92,7 +92,7 @@ class Round {
 
 		this.playerIndex = (this.playerIndex + 1) % this.playerStatuses.length;
 		if (this.playerIndex == this.lastRaiseIndex) {
-			return TurnState.NextRound
+			return TurnState.NextTurn
 		}
 
 		let numNotFolded = this.playerStatuses.filter(x => x != PlayerStatus.Folded).length;
@@ -135,3 +135,4 @@ class Game {
 }
 
 
+export { Game, Round, Player, Move, RoundState, PlayerStatus, MoveType, TurnState };

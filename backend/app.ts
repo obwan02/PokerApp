@@ -2,9 +2,10 @@ import { config } from 'dotenv';
 import { Server } from 'http';
 import express, { Application } from 'express';
 import { Server as IOServer, Socket } from 'socket.io';
-import { Player, Game, Round } from './state';
+import { Player, Game, Round, Move, MoveType, TurnState } from './lib/state';
 
 import logger from './lib/logger';
+import assert from 'assert';
 
 config();
 
@@ -15,7 +16,7 @@ const io = new IOServer(server);
 const PORT = process.env.PORT || 3000;
 
 const game = new Game();
-let round: Round;
+let round: Round | null | undefined;
 
 io.on('connection', (socket: Socket) => {
 
@@ -33,32 +34,32 @@ io.on('connection', (socket: Socket) => {
 	 */
 	socket.on('start', () => {
 		logger.info(`The game has now started at ${Date.now()}`)
-		round = game.startRound();
-		io.emit('started');
+		round = game.nextRound();
+		io.emit('new_round', { round });
 	});
 
 	/**
 	 * Player to perform action
 	 */
-	socket.on('action', (action: string, amount: number = 0) => {
+	socket.on('action', (action: string, amount?: number) => {
+		assert(round);
+
 		const player = game.getPlayerById(socket.id);
-		if (!player) {
-			throw new Error('Player could not be found');
-		}
+		assert(player);
 
 		logger.info(`Player ${player.name} performed action ${action}`);
 
+		let turnTaken;
+
 		switch (action) {
 			case 'fold':
-				//player.status = STATUS.folded;
+				turnTaken = round.playMove(new Move(MoveType.Fold));
 				break;
 			case 'call':
-				//player.status = STATUS.playing;
+				turnTaken = round.playMove(new Move(MoveType.Call));
 				break;
 			case 'raise':
-				//player.status = STATUS.playing;
-				//player.chips -= amount;
-				//round.addToPot(amount);
+				turnTaken = round.playMove(new Move(MoveType.Raise, amount));
 				break;
 			default:
 				logger.error('Player has performed an invalid action');
@@ -69,6 +70,7 @@ io.on('connection', (socket: Socket) => {
 
 		io.emit('pot_updated', pot);
 		io.emit('user_updated', player);
+		io.emit('turn_taken', { round, turnTaken });
 	});
 });
 
