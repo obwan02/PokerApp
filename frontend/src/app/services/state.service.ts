@@ -62,10 +62,7 @@ export class StateService {
         return;
       }
 
-      this.socket.emit(StateService.EVENT_TYPES.REGISTER, {
-        name,
-        chips
-      }, (_: any) => {
+      this.socket.emit(StateService.EVENT_TYPES.REGISTER, name, chips, (_: any) => {
         // todo: set round
         observer.complete();
       });
