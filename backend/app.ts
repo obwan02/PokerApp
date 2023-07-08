@@ -81,6 +81,7 @@ const performAction = (action: string, amount: number, socket: Socket) => {
 
   if (round.currentPlayer() != player) {
     logger.error('Player tried to perform an action when it was not their turn');
+    return;
   }
 
   logger.info(`Player ${player.name} performed action ${action}`);
