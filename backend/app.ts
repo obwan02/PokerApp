@@ -107,7 +107,7 @@ const performAction = (action: string, amount: number, socket: Socket) => {
       return;
   }
 
-  io.emit('turn_taken', { round, turnTaken });
+  io.emit(EVENT_TYPES.TURN_TAKEN, { round, turnTaken });
 };
 
 /**
