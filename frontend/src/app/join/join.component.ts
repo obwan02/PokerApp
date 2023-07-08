@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { StateService } from '../services/state.service';
 
 @Component({
   selector: 'app-join',
@@ -7,16 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class JoinComponent implements OnInit {
 
+  host: string = '';
   name: string = '';
   chips: number = 100;
 
-  constructor() { }
+  constructor(private stateService: StateService) { }
 
   ngOnInit(): void {
   }
 
   join(): void {
-    // todo
+    this.stateService.join(this.host, this.name, this.chips);
   }
 
 }
