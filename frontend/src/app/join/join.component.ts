@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { StateService } from '../services/state.service';
 
 @Component({
@@ -12,13 +13,15 @@ export class JoinComponent implements OnInit {
   name: string = '';
   chips: number = 100;
 
-  constructor(private stateService: StateService) { }
+  constructor(private stateService: StateService, private router: Router) { }
 
   ngOnInit(): void {
   }
 
   join(): void {
-    this.stateService.join(this.host, this.name, this.chips);
+    this.stateService.join(this.host, this.name, this.chips).subscribe(() => {
+      this.router.navigate(['play']);
+    });
   }
 
 }
