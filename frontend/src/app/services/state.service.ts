@@ -10,6 +10,7 @@ export class StateService {
   
   round?: Round;
   playerName?: string;
+  preRoundPlayers: Player[] = [];
 
   static EVENT_TYPES = {
     REGISTER: 'register', // send
@@ -28,18 +29,21 @@ export class StateService {
   constructor() {}
 
   private registerEvents() {
-    this.socket?.on(StateService.EVENT_TYPES.NEW_PLAYER, () => {
+    this.socket?.on(StateService.EVENT_TYPES.NEW_PLAYER, (players) => {
       // todo: set round
+      this.preRoundPlayers = players;
       this.playerJoined.emit();
     });
 
-    this.socket?.on(StateService.EVENT_TYPES.START, () => {
+    this.socket?.on(StateService.EVENT_TYPES.START, (round) => {
       // todo: set round
+      this.round = round;
       this.roundStarted.emit();
     });
 
-    this.socket?.on(StateService.EVENT_TYPES.TURN_TAKEN, () => {
+    this.socket?.on(StateService.EVENT_TYPES.TURN_TAKEN, (round) => {
       // todo: set round
+      this.round = round;
       this.turnTaken.emit();
     });
   }
