@@ -8,6 +8,8 @@ import { TurnState, Player, Round } from 'src/app/models/state'
 })
 export class StateService {
   
+  round?: Round;
+  playerName?: string;
 
   static EVENT_TYPES = {
     REGISTER: 'register', // send
@@ -19,20 +21,32 @@ export class StateService {
 
   socket?: Socket;
 
-  playerJoined: EventEmitter<Player> = new EventEmitter();
-  roundStarted: EventEmitter<Round> = new EventEmitter();
-  turnTaken: EventEmitter<{turnTaken: TurnState, round: Round}> = new EventEmitter();
+  playerJoined: EventEmitter<void> = new EventEmitter();
+  roundStarted: EventEmitter<void> = new EventEmitter();
+  turnTaken: EventEmitter<void> = new EventEmitter();
 
   constructor() {}
 
   private registerEvents() {
-    this.socket?.on(StateService.EVENT_TYPES.NEW_PLAYER, this.playerJoined.emit);
-    this.socket?.on(StateService.EVENT_TYPES.START, this.roundStarted.emit);
-    this.socket?.on(StateService.EVENT_TYPES.TURN_TAKEN, this.turnTaken.emit);
+    this.socket?.on(StateService.EVENT_TYPES.NEW_PLAYER, () => {
+      // todo: set round
+      this.playerJoined.emit();
+    });
+
+    this.socket?.on(StateService.EVENT_TYPES.START, () => {
+      // todo: set round
+      this.roundStarted.emit();
+    });
+
+    this.socket?.on(StateService.EVENT_TYPES.TURN_TAKEN, () => {
+      // todo: set round
+      this.turnTaken.emit();
+    });
   }
 
   join(host: string, name: string, chips: number): Observable<void> {
     this.socket = io(host);
+    this.playerName = name;
 
     // register events
     this.registerEvents();
@@ -48,6 +62,7 @@ export class StateService {
         name,
         chips
       }, (_: any) => {
+        // todo: set round
         observer.complete();
       });
     });
