@@ -10,7 +10,12 @@ config();
 
 const app: Application = express();
 const server = new Server(app);
-const io = new IOServer(server);
+const io = new IOServer(server, {
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
+});
 
 const PORT = Number(process.env.PORT) || 3000;
 
