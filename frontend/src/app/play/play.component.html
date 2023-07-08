@@ -23,4 +23,10 @@
     <div class="center-text" *ngIf="!stateService.round">
         <button mat-button mat-raised-button color="primary" (click)="start()">Start</button>
     </div>
+
+    <div class="center-text" *ngIf="stateService.round && stateService.socket?.id == stateService.currentPlayer()?.id">
+        <button mat-button mat-raised-button color="primary" (click)="fold()">Fold</button>
+        <button mat-button mat-raised-button color="primary" (click)="call()">Call</button>
+        <button mat-button mat-raised-button color="primary" (click)="raise()">Raise</button>
+    </div>
 </div>

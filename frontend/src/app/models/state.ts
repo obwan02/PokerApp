@@ -50,18 +50,6 @@ class Round {
 		this.playerStatuses = playerStatuses;
 		this.playerBets = playerBets;
 	}
-
-	currentPlayer(): Player {
-		return this.game.players[this.playerIndex]
-	}
-
-	currentPlayerStatus(): PlayerStatus {
-		return this.playerStatuses[this.playerIndex]
-	}
-
-	currentPlayerBet(): number {
-		return this.playerBets[this.playerIndex]
-	}
 }
 
 class Game {

@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
-import { TurnState, Player, Round } from 'src/app/models/state'
+import { TurnState, Player, Round, PlayerStatus } from 'src/app/models/state'
 
 @Injectable({
   providedIn: 'root'
@@ -73,4 +73,28 @@ export class StateService {
   start(): void {
     this.socket?.emit(StateService.EVENT_TYPES.START);
   }
+
+  fold(): void {
+
+  }
+
+  call(): void {
+
+  }
+
+  raise(): void {
+
+  }
+
+  currentPlayer(): Player | undefined {
+		return this.round?.game.players[this.round?.playerIndex];
+	}
+
+	currentPlayerStatus(): PlayerStatus | undefined {
+		return this.round?.playerStatuses[this.round?.playerIndex]
+	}
+
+	currentPlayerBet(): number | undefined {
+		return this.round?.playerBets[this.round?.playerIndex];
+	}
 }

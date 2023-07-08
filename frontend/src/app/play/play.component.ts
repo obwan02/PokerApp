@@ -17,4 +17,16 @@ export class PlayComponent implements OnInit {
     this.stateService.start()
   }
 
+  fold(): void {
+
+  }
+
+  call(): void {
+
+  }
+
+  raise(): void {
+    
+  }
+
 }
