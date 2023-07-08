@@ -9,7 +9,7 @@ import { StateService } from '../services/state.service';
 })
 export class JoinComponent implements OnInit {
 
-  host: string = '';
+  host: string = '192.168.178.40:3000';
   name: string = '';
   chips: number = 100;
 

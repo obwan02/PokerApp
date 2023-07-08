@@ -42,7 +42,7 @@ export class StateService {
       this.roundStarted.emit();
     });
 
-    this.socket?.on(StateService.EVENT_TYPES.TURN_TAKEN, (round) => {
+    this.socket?.on(StateService.EVENT_TYPES.TURN_TAKEN, ({round, turnTaken}) => {
       // todo: set round
       this.round = round;
       this.turnTaken.emit();
@@ -75,15 +75,15 @@ export class StateService {
   }
 
   fold(): void {
-
+    this.socket?.emit(StateService.EVENT_TYPES.ACTION, "fold")
   }
 
   call(): void {
-
+    this.socket?.emit(StateService.EVENT_TYPES.ACTION, "call")
   }
 
-  raise(): void {
-
+  raise(amount: number): void {
+    this.socket?.emit(StateService.EVENT_TYPES.ACTION, "raise", amount)
   }
 
   currentPlayer(): Player | undefined {

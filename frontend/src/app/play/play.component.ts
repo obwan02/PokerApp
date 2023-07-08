@@ -18,15 +18,16 @@ export class PlayComponent implements OnInit {
   }
 
   fold(): void {
-
+    this.stateService.fold();
   }
 
   call(): void {
-
+    this.stateService.call();
   }
 
   raise(): void {
-    
+    var amount = prompt('Raise amount');
+    this.stateService.raise(parseInt(amount || '0'));
   }
 
 }
