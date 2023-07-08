@@ -26,20 +26,24 @@ const EVENT_TYPES = {
   ACTION: 'action',
   TURN_TAKEN: 'turn_taken',
   NEW_PLAYER: 'new_player'
-}
+};
 
 /**
  * Socket IO Handler
  */
 io.on('connection', (socket: Socket) => {
   // register event
-  socket.on(EVENT_TYPES.REGISTER, (name: string, chips: number) => registerPlayer(name, chips, socket));
+  socket.on(EVENT_TYPES.REGISTER, (name: string, chips: number) =>
+    registerPlayer(name, chips, socket)
+  );
 
   // start game event
   socket.on(EVENT_TYPES.START, () => startGame());
 
   // action event
-  socket.on(EVENT_TYPES.ACTION, (action: string, amount: number) => performAction(action, amount, socket));
+  socket.on(EVENT_TYPES.ACTION, (action: string, amount: number) =>
+    performAction(action, amount, socket)
+  );
 });
 
 /**
@@ -51,17 +55,17 @@ const registerPlayer = (name: string, chips: number, socket: Socket) => {
   game.addPlayer(player);
 
   io.emit(EVENT_TYPES.NEW_PLAYER, player);
-}
+};
 
 /**
  * Initiate the game
  */
 const startGame = () => {
-  logger.info(`The game has now started at ${Date.now()}`)
+  logger.info(`The game has now started at ${Date.now()}`);
   round = game.nextRound();
 
-  io.emit(EVENT_TYPES.START, { round });
-}
+  io.emit(EVENT_TYPES.START, round);
+};
 
 /**
  * Player to perform an action
@@ -73,7 +77,7 @@ const performAction = (action: string, amount: number, socket: Socket) => {
   }
 
   const player = game.getPlayerById(socket.id);
-  
+
   if (!player) {
     logger.error('Someone tried to perform an action before registering');
     return;
@@ -104,7 +108,7 @@ const performAction = (action: string, amount: number, socket: Socket) => {
   }
 
   io.emit('turn_taken', { round, turnTaken });
-}
+};
 
 /**
  * Start the IO server
