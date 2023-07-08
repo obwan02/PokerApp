@@ -79,11 +79,12 @@ class Round {
         break;
 
       case MoveType.Call:
-        this.playerBets[this.playerIndex] = this.currentBet;
-
         let diff = this.currentBet - this.currentPlayerBet();
+        this.playerBets[this.playerIndex] = this.currentBet;
+        
         this.currentPlayer().chips -= diff;
         this.currentPot += diff;
+        
         break;
 
       case MoveType.Raise:
