@@ -130,22 +130,23 @@ const performAction = (action: string, amount: number, socket: Socket) => {
 
 	logger.info(`Player ${player.name} performed action ${action}`);
 
-	let turnState: TurnState;
-
+	let move: Move;
 	switch (action) {
 		case 'fold':
-			turnState = round.playMove(new Move(MoveType.Fold));
+			move = new Move(MoveType.Fold);
 			break;
 		case 'call':
-			turnState = round.playMove(new Move(MoveType.Call));
+			move = new Move(MoveType.Call);
 			break;
 		case 'raise':
-			turnState = round.playMove(new Move(MoveType.Raise, amount));
+			move = new Move(MoveType.Raise, amount);
 			break;
 		default:
 			logger.error('Player has performed an invalid action');
 			return;
 	}
+
+	const turnState = round.playMove(move);
 
 	if (turnState == TurnState.End) {
 		// Calculate winners
@@ -154,7 +155,7 @@ const performAction = (action: string, amount: number, socket: Socket) => {
 		round = nextRound ?? round;
 	}
 
-	io.emit(EVENT_TYPES.TURN_TAKEN, { round, turnTaken: turnState });
+	io.emit(EVENT_TYPES.TURN_TAKEN, { round, turnState, move });
 };
 
 const set_winner = (id: string) => {

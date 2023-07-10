@@ -1,91 +1,98 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
-import { TurnState, Player, Round, PlayerStatus } from 'src/app/models/state'
+import { Move, Player, Round, PlayerStatus, TurnState } from 'src/app/models/state'
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class StateService {
-  
-  round?: Round;
-  playerName?: string;
-  preRoundPlayers: Player[] = [];
 
-  static EVENT_TYPES = {
-    REGISTER: 'register', // send
-    START: 'start', // send and recieve
-    ACTION: 'action', // send
-    TURN_TAKEN: 'turn_taken', // recieve
-    UPDATE_PLAYERS: 'update_players' // recieve
-  };
+	round?: Round;
+	playerName?: string;
+	preRoundPlayers: Player[] = [];
 
-  socket?: Socket;
+	static EVENT_TYPES = {
+		REGISTER: 'register', // send
+		START: 'start', // send and recieve
+		ACTION: 'action', // send
+		TURN_TAKEN: 'turn_taken', // recieve
+		UPDATE_PLAYERS: 'update_players' // recieve
+	};
 
-  playerJoined: EventEmitter<void> = new EventEmitter();
-  roundStarted: EventEmitter<void> = new EventEmitter();
-  turnTaken: EventEmitter<void> = new EventEmitter();
+	socket?: Socket;
 
-  constructor() {}
+	playerJoined: EventEmitter<void> = new EventEmitter();
+	roundStarted: EventEmitter<void> = new EventEmitter();
+	turnTaken: EventEmitter<Move> = new EventEmitter();
+	nextStage: EventEmitter<void> = new EventEmitter();
+	roundEnded: EventEmitter<void> = new EventEmitter();
 
-  private registerEvents() {
-    this.socket?.on(StateService.EVENT_TYPES.UPDATE_PLAYERS, (players) => {
-      // todo: set round
-      this.preRoundPlayers = players;
-      this.playerJoined.emit();
-    });
+	constructor() { }
 
-    this.socket?.on(StateService.EVENT_TYPES.START, (round) => {
-      // todo: set round
-      this.round = round;
-      this.roundStarted.emit();
-    });
+	private registerEvents() {
+		this.socket?.on(StateService.EVENT_TYPES.UPDATE_PLAYERS, (players) => {
+			this.preRoundPlayers = players;
+			this.playerJoined.emit();
+		});
 
-    this.socket?.on(StateService.EVENT_TYPES.TURN_TAKEN, ({round, turnTaken}) => {
-      // todo: set round
-      this.round = round;
-      this.turnTaken.emit();
-    });
-  }
+		this.socket?.on(StateService.EVENT_TYPES.START, (round) => {
+			this.round = round;
+			this.roundStarted.emit();
+		});
 
-  join(host: string, name: string, chips: number): Observable<void> {
-    this.socket = io(host);
-    this.playerName = name;
+		this.socket?.on(StateService.EVENT_TYPES.TURN_TAKEN, ({ round, turnState, move }) => {
+			this.round = round;
+			this.turnTaken.emit(move);
 
-    // register events
-    this.registerEvents();
+			if (turnState == TurnState.NextTurn) {
+				this.nextStage.emit();
+			}
 
-    return new Observable(observer => {
-      
-      if(!this.socket) {
-        observer.error();
-        return;
-      }
+			if (turnState == TurnState.End) {
+				this.roundEnded.emit();
+			}
+		});
+	}
 
-      this.socket?.emitWithAck(StateService.EVENT_TYPES.REGISTER, name, chips).then((_: any) => {
-        // todo: set round
-        observer.next();
-      });
-    });
-  }
+	join(host: string, name: string, chips: number): Observable<void> {
+		this.socket = io(host);
+		this.playerName = name;
 
-  start(): void {
-    this.socket?.emit(StateService.EVENT_TYPES.START);
-  }
+		// register events
+		this.registerEvents();
 
-  fold(): void {
-    this.socket?.emit(StateService.EVENT_TYPES.ACTION, "fold")
-  }
+		return new Observable(observer => {
 
-  call(): void {
-    this.socket?.emit(StateService.EVENT_TYPES.ACTION, "call")
-  }
+			if (!this.socket) {
+				observer.error();
+				return;
+			}
 
-  raise(amount: number): void {
-    this.socket?.emit(StateService.EVENT_TYPES.ACTION, "raise", amount)
-  }
+			this.socket?.emitWithAck(StateService.EVENT_TYPES.REGISTER, name, chips).then((_: any) => {
+				// todo: set round
+				observer.next();
+			});
+		});
+	}
 
-  currentPlayer(): Player | undefined {
+	start(): void {
+		this.socket?.emit(StateService.EVENT_TYPES.START);
+	}
+
+	fold(): void {
+		this.socket?.emit(StateService.EVENT_TYPES.ACTION, "fold")
+	}
+
+	call(): void {
+		this.socket?.emit(StateService.EVENT_TYPES.ACTION, "call")
+	}
+
+	raise(amount: number): void {
+		this.socket?.emit(StateService.EVENT_TYPES.ACTION, "raise", amount)
+	}
+
+	currentPlayer(): Player | undefined {
 		return this.round?.game.players[this.round?.playerIndex];
 	}
 
